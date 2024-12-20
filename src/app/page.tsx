@@ -4,10 +4,14 @@ import { useEffect, useState } from "react";
 
 export default function Home() {
 
+  // setting a new type for the API elements
   type Users = {
     name?: {
       first?: string;
       last?: string;
+    }
+    login?: {
+      uuid: string
     }
   }
 
@@ -35,11 +39,11 @@ export default function Home() {
     <div className="flex items-center justify-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
       <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
         <div className="flex flex-col gap-4 items-center">
-          { users.map((user, index) => (
-            <div key={index}>
+          { users.map((user) => ( // mapping the users via "user"
+            <div key={user.login?.uuid}>
               {user.name?.first || "No first name available"}
             </div>
-          ))}
+          )) }
         </div>
       </main>
     </div>
