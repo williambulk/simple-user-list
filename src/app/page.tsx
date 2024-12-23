@@ -7,6 +7,7 @@ export default function Home() {
 
   const [currentPage, setCurrentPage] = useState(1);
   const [postsPerPage, setPostsPerPage] = useState(10);
+  const [loading, setLoading] = useState(true);
 
   // setting a new type for the API elements
   type Users = {
@@ -26,18 +27,28 @@ export default function Home() {
 
   // asyncronous function
   const fetchData = async () => {
-    // using the window.fetch method to get the request
-    const res = await window.fetch(API_URL);
-    // transforming the "res" variable to json
-    const json = await res.json();
-    // setting the state
-    setUsers(json.results); // results is the API array
+    try {
+      // using the window.fetch method to get the request
+      const res = await window.fetch(API_URL);
+      // Throwing error in case the response variable is unavailable
+      if (!res.ok) throw new Error(`HTTP error! Status: ${res.status}`);
+      // transforming the "res" variable to json
+      const json = await res.json();
+      // setting the state
+      setUsers(json.results); // results is the API array
+    } catch (error) {
+      console.error("Could not fetch users", error);
+    } finally {
+      setLoading(false);
+    }
   }
   
   // using useEffect to get the results when the page loads (component mount), hence the []
   useEffect(() => {
     fetchData();
   }, []);
+
+  if (loading) return <p>Loading...</p>;
 
   const lastPostIndex = currentPage * postsPerPage; // setting the last index
   const firstPostIndex = lastPostIndex - postsPerPage; // setting the first index
