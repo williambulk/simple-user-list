@@ -1,8 +1,12 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Pagination from "./pagination";
 
 export default function Home() {
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const [postsPerPage, setPostsPerPage] = useState(10);
 
   // setting a new type for the API elements
   type Users = {
@@ -35,15 +39,25 @@ export default function Home() {
     fetchData();
   }, []);
 
+  const lastPostIndex = currentPage * postsPerPage; // setting the last index
+  const firstPostIndex = lastPostIndex - postsPerPage; // setting the first index
+  const currentPosts = users.slice(firstPostIndex, lastPostIndex); // using slice to get starting index and last index
+
   return (
     <div className="flex items-center justify-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
       <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
         <div className="flex flex-col gap-4 items-center">
-          { users.map((user) => ( // mapping the users via "user"
+          { currentPosts.map((user) => ( // mapping the users via "user"
             <div key={user.login?.uuid}>
               {user.name?.first || "No first name available"}
             </div>
           )) }
+          <Pagination
+            totalPosts={users.length}
+            postsPerPage={postsPerPage}
+            setCurrentPage={setCurrentPage}
+            currentPage={currentPage}
+          />
         </div>
       </main>
     </div>
